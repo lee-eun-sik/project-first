@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>숙박업소 세부 정보</title>
+  <link rel="stylesheet" href="Lodge-1.css">
+</head>
+
+<body>
+
+  <!-- 숙박업소 세부 정보 -->
+  <div class="hotel-detail">
+    <h2 id="title">숙박업소 정보</h2>
+    <p><strong>주소:</strong> <span id="addr">정보 없음</span></p>
+    <p><strong>거리:</strong> <span id="dist">정보 없음</span></p>
+    <p><strong>전화번호:</strong> <span id="tel">정보 없음</span></p>
+    <img id="image" src="" alt="이미지 없음">
+    <br>
+    <a href="./숙박업소.html" class="back-btn">목록으로 돌아가기</a>
+  </div>
+
+  <!-- 지도 영역 -->
+  <div id="map" class="map-container"></div>
+
+  <!-- Kakao 지도 API (수동 로드) -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=48750a8a5af91cf03bd7e0c001a0bd4a"></script>
+
+  <script>
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        title: params.get("title"),
+        addr: params.get("addr"),
+        dist: params.get("dist"),
+        tel: params.get("tel"),
+        image: params.get("image"),
+        mapx: parseFloat(params.get("mapX")), // 경도 (숫자로 변환)
+        mapy: parseFloat(params.get("mapY"))  // 위도 (숫자로 변환)
+      };
+    }
+
+    const data = getQueryParams();
+    document.getElementById("title").textContent = data.title || "정보 없음";
+    document.getElementById("addr").textContent = data.addr || "정보 없음";
+    document.getElementById("dist").textContent = data.dist || "정보 없음";
+    document.getElementById("tel").textContent = data.tel || "정보 없음";
+
+    if (data.image) {
+      document.getElementById("image").src = data.image;
+    } else {
+      document.getElementById("image").style.display = "none";
+    }
+
+    // Kakao Maps API 로드 후 실행
+    kakao.maps.load(function () {
+      const data = getQueryParams();
+      let mapx = data.mapx;
+      let mapy = data.mapy;
+      console.log(mapx);
+      console.log(mapy);
+      console.log(typeof (mapx));
+      console.log(typeof (mapy));
+
+
+      let mapContainer = document.getElementById('map');
+      let mapOption = {
+        // center: new kakao.maps.LatLng(35.1877669046, 129.0815722951), // 기본 위치 (서울)
+        center: new kakao.maps.LatLng(mapx, mapy),
+        level: 3 // 줌 레벨
+      };
+
+      let map = new kakao.maps.Map(mapContainer, mapOption);
+      
+      let markerPosition = new kakao.maps.LatLng(mapx, mapy);
+
+      // 마커를 생성합니다
+      let marker = new kakao.maps.Marker({
+        position: markerPosition
+      });
+
+      // 마커가 지도 위에 표시되도록 설정합니다
+      marker.setMap(map);
+
+      // kakao.maps.load(function () {
+      //   let map = new kakao.maps.Map(mapContainer, mapOption);
+      // });
+    });
+  </script>
+
+</body>
+
+</html>

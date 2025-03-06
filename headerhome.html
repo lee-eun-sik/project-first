@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="headerhome.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 헤더</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+    <!-- <link rel="stylesheet" href="header.css"> -->
+    <header id="header">
+        <!-- 로고 -->
+        <div class="header-container">
+            <a href="./Home.html"><img src="./logo.webp" alt=""></a>
+        </div>
+        <!-- 메뉴 -->
+        <div class="menu">
+            <div class="menubtn">
+                <button value="교통현황" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/교통정보.png" alt="교통정보 이미지">
+                    <span class="menu-text">교통현황</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="관광지" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/관광.png" alt="관광지 이미지">
+                    <span class="menu-text">관광지</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="문화시설" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/문화시설.png" alt="문화시설 이미지">
+                    <span class="menu-text">문화시설</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="음식점" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/휴게소.png" alt="음식점 이미지">
+                    <span class="menu-text">음식점</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="축제공연" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/축제.png" alt="축제 이미지">
+                    <span class="menu-text">축제공연</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="숙박" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/숙박.png" alt="숙박 이미지">
+                    <span class="menu-text">숙박</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="레포츠" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/레포츠.png" alt="레포츠 이미지">
+                    <span class="menu-text">레포츠</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="여행코스" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/./길-removebg-preview.png" alt="여행코스 이미지">
+                    <span class="menu-text">여행코스</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 로그인 -->
+    <div id="login-area">
+        <span id="welcome-text"></span>
+        <a class="login" href="login.html" id="login">로그인</a>
+        <a class="login" href="join.html" id="join">회원가입</a>
+        <input class="logout" type="button" id="logout" value="로그아웃">
+    </div>
+    
+    <!-- 메뉴바 활성화 -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var activeMenu = localStorage.getItem('activeMenu');
+            if (activeMenu) {
+                $('button[value="' + activeMenu + '"]').addClass('active');
+            }
+    
+            $('.menubtn button').click(function () {
+                loginCheck($(this).val());
+            });
+        });
+    
+        function loginCheck(value) {
+      
+            $('.menubtn button').removeClass('active');
+            $('button[value="' + value + '"]').addClass('active');
+
+            localStorage.setItem('activeMenu', value);
+            window.location.href = value + '.html';
+        }
+    </script>
+    
+</body>
+
+</html>

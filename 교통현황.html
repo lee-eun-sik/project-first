@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="교통현황.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="./jquery-3.7.1.min.js"></script> <!--jquery 주소변경-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    <script src="script.js"></script>
+    <script src="교통스크립트.js"></script>
+    <header id="headertraffic"></header>
+    <!-- 지도불러오기 -->
+    <section>
+
+        <div id="trafficcolor" class="trafficcolor">
+            <span class="low-traffic-text">원활</span>
+            <div class="low-traffic-line"></div>
+            <span class="medium-traffic-text">서행</span>
+            <div class="medium-traffic-line"></div>
+            <span class="high-traffic-text">정체</span>
+            <div class="high-traffic-line"></div>
+        </div>
+        <div id="map" class="map"></div>
+        <div class="bar" id="bardiv" style="display: none;"><canvas id="myChart"></canvas></div>
+
+    </section>
+    <!-- 맵불러오기 -->
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8893ecb8ae22e7699d78acfb20c56b3f&libraries=services"></script>
+
+</body>
+
+</html>

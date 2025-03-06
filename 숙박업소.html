@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>숙박업소 목록</title>
+  <link rel="stylesheet" href="숙박업소.css">
+</head>
+<body>
+  <div id="hotel-list">숙박업소를 불러오는 중입니다...</div>
+
+  <script type="text/javascript">
+    const apiKey = "QihWWD6Bgy/rg7CSnyw+gK2FwGoFwoGSb04ZdGmaxyZstol4Cgs26MCOxxv++1eXz3q6pLQtFJt83Y54LbOafg==";
+    const url = "http://apis.data.go.kr/B551011/KorService1/locationBasedList1";
+
+    const params = new URLSearchParams({
+      serviceKey: apiKey,
+      numOfRows: 8,
+      pageNo: 1,
+      MobileOS: "ETC",
+      MobileApp: "TestApp",
+      mapX: 129.0756416,  // 서울의 경도
+      mapY: 35.1795543,   // 서울의 위도
+      radius: 5000,
+      contentTypeId: 32,  // 숙박업소에 해당하는 contentTypeId
+      _type: "json",
+    });
+
+    function getRandomColor() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    async function fetchHotelData() {
+      try {
+        const response = await fetch(`${url}?${params}`);
+        const data = await response.json();
+
+        if (!data.response?.body?.items?.item) {
+          document.getElementById("hotel-list").textContent = "숙박업소 데이터를 찾을 수 없습니다.";
+          return;
+        }
+
+        const hotels = data.response.body.items.item;
+        displayHotelNames(hotels);
+      } catch (error) {
+        document.getElementById("hotel-list").textContent = "데이터를 가져오는 중 오류가 발생했습니다.";
+        console.error("Error:", error);
+      }
+    }
+
+    function displayHotelNames(hotels) {
+      const container = document.getElementById("hotel-list");
+      container.innerHTML = "";  // 기존 내용 초기화
+      hotels.forEach((hotel) => {
+        const hotelCard = document.createElement("div");
+        hotelCard.classList.add("hotel-card");
+        hotelCard.style.backgroundColor = getRandomColor(); // 랜덤 색상 적용
+        hotelCard.innerHTML = `<h3>${hotel.title}</h3>`;
+        console.log(hotel)
+
+        hotelCard.addEventListener("click", () => {
+          const queryParams = new URLSearchParams({
+            title: hotel.title,
+            addr: hotel.addr1 || "정보 없음",
+            dist: hotel.dist || "정보 없음",
+            tel: hotel.tel || "정보 없음",
+            mapX : hotel.mapy || "정보 없음",
+            mapY : hotel.mapx || "정보 없음",
+            image: hotel.firstimage || "",
+          }).toString();
+
+          window.location.href = `./lodge-1.html?${queryParams}`;
+        });
+
+        container.appendChild(hotelCard);
+      });
+    }
+
+    fetchHotelData();
+  </script>
+
+</body>
+</html>

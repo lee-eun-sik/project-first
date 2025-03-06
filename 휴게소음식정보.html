@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고속도로 정보 API</title>
+    <script type="text/javascript" src="./jquery-3.7.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="휴게소음식정보.css">
+
+</head>
+
+<body>
+    <h2 id="restAreaName"></h2>
+
+
+    <div class="container" id="result">
+        <!-- Food and Convenience Tables side by side -->
+        <div class="side-by-side">
+            <div id="foodData"></div>
+            <div id="convData"></div>
+        </div>
+        <!--옆으로 나란히 배치-->
+        <div class="weather-container">
+            <!-- Weather Table -->
+            <div id="weatherData" class="rest-area-weather"></div>
+            <div id="weather-info" class="real-time-weather">휴게소 정보를 불러오는 중...
+                <!-- 날씨 정보가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        let urlParams = new URLSearchParams(window.location.search);
+        let stdRestCd = urlParams.get('stdRestCd');
+        let unitCode = urlParams.get('unitCode');
+        console.log("stdRestCd:", stdRestCd);
+        console.log("unitCode:", unitCode);
+        
+        
+
+
+        $(document).ready(function () {
+            const apiKey = "8024505971"; // API 인증키 입력
+            const url = "https://data.ex.co.kr/openapi/restinfo/restWeatherList";
+            
+            const currentTime = new Date(); // 현재 시간
+            currentTime.setHours(currentTime.getHours() - 4); //3시간을 뺌
+            
+            let stdHour = currentTime.getHours().toString().padStart(2, "0"); //시를 2자리로 포맷팅
+            
+            let sdate = yyyymmdd();
+
+            function yyyymmdd() {
+                var x = new Date();
+                var y = x.getFullYear().toString();
+                var m = (x.getMonth() + 1).toString();
+                var d = x.getDate().toString();
+                (d.length == 1)&&(d = "0" + d);
+                (m.length == 1)&&(m = "0" + m);
+                var yyyymmdd = y + m + d;
+                return yyyymmdd;
+            }
+            console.log(sdate);
+            console.log(stdHour);
+            let stdRestNm = "";
+            $.ajax({
+                url : url,
+                type : "GET",
+                data: {
+                    key : apiKey,
+                    type : "json",
+                    sdate : sdate,
+                    stdHour : stdHour,
+                    unitCode : unitCode,
+                    list: []
+                },
+                dataType : "json",
+                success : function (response) {
+                    console.log("날씨:",response);
+
+                    if (response && response.list) {
+              
+                let weatherData = response.list.find(item => String(item.unitCode).trim() === String(unitCode).trim());
+                console.log(weatherData);        
+                if (weatherData) {
+                    $("#weather-info").html(`             
+                        
+                     <p>날씨 정보:</p>
+                        <ul>
+                           <li>날씨 상태: ${weatherData.weatherContents}</li>
+                            <li>현재 기온: ${parseFloat(weatherData.tempValue).toFixed(1)}°C</li>
+                         
+                           
+                            <li>바람 속도:  ${parseFloat(weatherData.windValue).toFixed(1)}m/s</li>
+                            
+                        </ul>
+                    `);
+                } else {
+                    $("#weather-info").html(`<p>unitCode:에 대한 날씨 정보를 찾을 수 없습니다.</p>`);
+                }
+            } else {
+                $("#weather-info").html("<p>API에서 날씨 데이터를 불러올 수 없습니다.</p>");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("API 요청 실패:", error);
+            $("#weather-info").html("<p>데이터를 불러오는 중 오류가 발생했습니다.</p>");
+            }
+            })
+
+           
+
+            $("#document").ready(function () {
+                
+                $("#foodData").html("");
+                $("#convData").html("");
+                $("#weatherData").html("");
+                
+                // Fetch food info based on selected rest stop
+                $.ajax({
+                    url: "https://data.ex.co.kr/openapi/restinfo/restBestfoodList",
+                    type: "GET",
+                    data: {
+                        key: "8024505971",
+                        type: "json",
+                        numOfRows: 99,
+                        pageNo: 1,
+                        stdRestCd: stdRestCd, // 선택된 휴게소명으로 변경
+                    },
+                    dataType: "json",
+                    success: function (foodResponse) {
+                        console.log(foodResponse)
+                        let foodItems = foodResponse.list || [];
+                        let foodTable = `<table><caption>음식 정보</caption><thead><tr><th>음식명</th><th>가격</th><th>설명</th></tr></thead><tbody>`;
+                        if (foodItems.length === 0) {
+                            foodTable += `<tr><td colspan="3">음식 정보 없음</td></tr>`;
+                        } else {
+                            foodItems.forEach(item => {
+                                foodTable += `<tr><td>${item.foodNm}</td><td>${item.foodCost}원</td><td>${item.etc}</td></tr>`;
+                            });
+                        }
+                        foodTable += `</tbody></table>`;
+                        $("#foodData").html(foodTable);
+
+                        if (foodItems.length > 0) {
+                            let stdRestNm = foodItems[0].stdRestNm;
+                            $("#restAreaName").text(`${stdRestNm}`);
+                        }
+                    }
+                });
+
+                // Fetch convenience info based on selected unit code
+                $.ajax({
+                    url: "https://data.ex.co.kr/openapi/restinfo/restConvList",
+                    type: "GET",
+                    data: {
+                        key: "8024505971",
+                        type: "json",
+                        numOfRows: 99,
+                        pageNo: 1,
+                        stdRestCd: stdRestCd, // 선택된 휴게소명으로 변경
+                    },
+                    dataType: "json",
+                    success: function (convResponse) {
+                        let convItems = convResponse.list || [];
+                        let convTable = `<table><caption>편의시설 정보</caption><thead><tr><th>편의시설</th><th>설명</th></tr></thead><tbody>`;
+                        if (convItems.length === 0) {
+                            convTable += `<tr><td colspan="2">편의시설 정보 없음</td></tr>`;
+                        } else {
+                            convItems.forEach(item => {
+                                convTable += `<tr><td>${item.psName}</td><td>${item.psDesc}</td></tr>`;
+                            });
+                        }
+                        convTable += `</tbody></table>`;
+                        $("#convData").html(convTable);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

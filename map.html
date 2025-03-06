@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="map" style="width:500px;height:350px;"></div>
+
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=48750a8a5af91cf03bd7e0c001a0bd4a"></script>
+    <script>
+        var mapContainer = document.getElementById('map'),
+            mapOption = {
+                center: new kakao.maps.LatLng(33.450701, 126.570667),
+                level: 3
+            };
+            
+        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+        // 지도에 교통정보를 표시하도록 지도타입을 추가합니다
+        map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+
+        // 아래 코드는 위에서 추가한 교통정보 지도타입을 제거합니다
+        // map.removeOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+    </script>
+</body>
+</html>

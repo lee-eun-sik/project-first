@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 코스 상세 정보</title>
+    <link rel="stylesheet" href="./여행코스세부사항.css">
+    <script type="text/javascript" src="./jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+
+    <script src="script.js"></script>
+    <header id="header"></header>
+
+    <div class="travel-detail">
+        <img id="image" src="" alt="이미지 없음">
+        <h2 id="title">여행 코스 정보</h2>
+        <p><strong>주소:</strong> <span id="addr">정보 없음</span></p>
+        <p><strong>전화번호:</strong> <span id="tel">정보 없음</span></p>
+        <a href="./숙박.html" class="back-btn">목록으로 돌아가기</a>
+    </div>
+
+    </div>
+
+    <!-- 지도 영역 -->
+    <div id="map" class="map"></div>
+
+    <!-- Kakao 지도 API (defer 속성 제거) -->
+    <script type="text/javascript"
+        src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=351c7f5e8166ca2967f8f005df63b4ab"></script>
+    <script>
+        window.onload = function () {
+            document.getElementById("title").textContent = sessionStorage.getItem("ctitle") || "정보없음";
+            document.getElementById("addr").textContent = sessionStorage.getItem("caddr") || "정보없음";
+            document.getElementById("tel").textContent = sessionStorage.getItem("ctel") || "정보없음";
+            const imageElement = document.getElementById("image");
+            if (sessionStorage.getItem("cimage")) {
+                imageElement.src = sessionStorage.getItem("cimage") || "정보없음";
+            } else {
+                imageElement.style.display = "none"; // 이미지 없을 경우 숨김
+            }
+            let mapX = sessionStorage.getItem("cmapy");
+            let mapY = sessionStorage.getItem("cmapx");
+            // Kakao 지도 API가 완전히 로드된 후 실행
+            let mapContainer = document.getElementById("map"),
+                mapOption = {
+                    center: new kakao.maps.LatLng(mapX, mapY),
+                    level: 5,
+                };
+            let map = new kakao.maps.Map(mapContainer, mapOption);
+            let marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(mapX, mapY)
+            });
+            marker.setMap(map);
+
+        };
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고속도로 정보 API</title>
+    <script type="text/javascript" src="../jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+    <h2>고속도로 정보</h2>
+    <button id="getData">데이터 가져오기</button>
+    <pre id="result"></pre>
+
+    <script>
+        $(document).ready(function () {
+            $("#getData").click(function () {
+                $.ajax({
+                    url: "https://data.ex.co.kr/openapi/locationinfo/locationinfoRest",
+                    type: "GET",
+                    data: {
+                        key: "3762609281", // 여기에 본인 API 키 입력
+                        type: "json",
+                        numOfRows: 200, // 원하는 데이터 개수
+                        pageNo: 2
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response);
+                        $("#result").text(JSON.stringify(response, null, 2)); // JSON 데이터를 보기 좋게 출력
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("에러 발생:", error);
+                        $("#result").text("API 요청 중 오류 발생");
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

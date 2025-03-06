@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>지역 기반 관광 정보</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 가로 4개씩 */
+      gap: 50px;
+      width: 60%; /* 그리드 너비 조정 */
+      padding: 20px;
+      background-color: white;
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      
+    }
+
+    .tour-item {
+      width: 85%;
+      height: auto;
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      height: 150px;
+    }
+
+    .tour-item:hover {
+      transform: translateY(-5px); /* 호버 시 살짝 올라감 */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .tour-details {
+      display: none;
+      margin-top: 10px;
+      padding: 5px;
+      border-top: 1px dashed #ccc;
+      background-color: #e0f7fa;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-container" id="grid-container">데이터를 불러오는 중입니다...</div>
+
+  <script type="text/javascript">
+    const apiKey = "QihWWD6Bgy/rg7CSnyw+gK2FwGoFwoGSb04ZdGmaxyZstol4Cgs26MCOxxv++1eXz3q6pLQtFJt83Y54LbOafg==";
+    const url = "http://apis.data.go.kr/B551011/KorService1/locationBasedList1";
+
+    const params = new URLSearchParams({
+      serviceKey: apiKey,
+      numOfRows: 8,
+      pageNo: 1,
+      MobileOS: "ETC",
+      MobileApp: "TestApp",
+      mapX: 126.9784,
+      mapY: 37.5665,
+      radius: 5000,
+      contentTypeId: 32,
+      _type: "json",
+    });
+
+    function getVividColor() {
+      const hue = Math.floor(Math.random() * 360);
+      return `hsl(${hue}, 60%, 50%)`;
+    }
+
+    async function fetchTourData() {
+      try {
+        const response = await fetch(`${url}?${params}`);
+        const textResponse = await response.text();
+        const data = JSON.parse(textResponse);
+        displayTourData(data.response.body.items.item);
+      } catch (error) {
+        document.getElementById("grid-container").textContent = "데이터를 가져오는 중 오류가 발생했습니다.";
+        console.error("Error:", error);
+      }
+    }
+
+    function displayTourData(items) {
+      if (!items || items.length === 0) {
+        document.getElementById("grid-container").textContent = "관광지 데이터를 찾을 수 없습니다.";
+        return;
+      }
+
+      const container = document.getElementById("grid-container");
+      container.innerHTML = "";
+
+      items.forEach((item, index) => {
+        const tourItem = document.createElement("div");
+        tourItem.className = "tour-item";
+        tourItem.style.backgroundColor = getVividColor();
+        tourItem.innerHTML = `
+          <strong>${item.title}</strong>
+          <div id="details-${index}" class="tour-details">
+            <p>주소: ${item.addr1 || "정보 없음"}</p>
+            <p>거리: ${item.dist || "정보 없음"}m</p>
+            <p>전화번호: ${item.tel || "정보 없음"}</p>
+            ${item.firstimage ? `<img src="${item.firstimage}" alt="${item.title}" width="80">` : ""}
+          </div>
+        `;
+
+        tourItem.addEventListener("click", () => {
+          const details = document.getElementById(`details-${index}`);
+          details.style.display = details.style.display === "block" ? "none" : "block";
+        });
+
+        container.appendChild(tourItem);
+      });
+    }
+
+    fetchTourData();
+  </script>
+</body>
+</html>

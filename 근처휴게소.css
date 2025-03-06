@@ -1,0 +1,14 @@
+body{
+    align-content: center; 
+    background-image: url('./back.webp'); 
+    background-size: cover;
+}
+
+.map{
+    border-radius: 12px; 
+    position: absolute; 
+    right: 140px; 
+    top: 300px; 
+    width:976px; 
+    height:475px;
+}

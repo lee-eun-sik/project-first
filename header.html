@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="header.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>헤더</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+    <!-- <link rel="stylesheet" href="header.css"> -->
+    <header id="header">
+        <!-- 로고 -->
+        <div class="header-container">
+            <a href="./Home.html"><img src="./logo.webp" alt="Logo"></a>
+        </div>
+        <!-- 메뉴 -->
+        <div class="menu">
+            <div class="menubtn">
+                <button value="관광지" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/관광.png" alt="관광지 이미지">
+                    <span class="menu-text">관광지</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="문화시설" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/문화시설.png" alt="문화시설 이미지">
+                    <span class="menu-text">문화시설</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="음식점" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/휴게소.png" alt="음식점 이미지">
+                    <span class="menu-text">음식점</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="축제공연" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/축제.png" alt="축제 이미지">
+                    <span class="menu-text">축제공연</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="숙박" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/숙박.png" alt="숙박 이미지">
+                    <span class="menu-text">숙박</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="레포츠" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/레포츠.png" alt="레포츠 이미지">
+                    <span class="menu-text">레포츠</span>
+                </button>
+            </div>
+            <div class="menubtn">
+                <button value="여행코스" onclick="loginCheck(this.value)">
+                    <img class="menu-image" src="images/./길-removebg-preview.png" alt="여행코스 이미지">
+                    <span class="menu-text">여행코스</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 로그인 -->
+    <div id="login-area">
+        <span id="welcome-text"></span>
+        <a class="login" href="login.html" id="login">로그인</a>
+        <a class="login" href="join.html" id="join">회원가입</a>
+        <input class="logout" type="button" id="logout" value="로그아웃">
+    </div>
+
+    <div class="sidebar">
+        <select id="areaCode">
+            <option value="">지역 선택</option>
+            <option value="1">서울</option>
+            <option value="6">부산</option>
+            <option value="4">대구</option>
+            <option value="2">인천</option>
+            <option value="5">광주</option>
+            <option value="3">대전</option>
+            <option value="7">울산</option>
+            <option value="8">세종</option>
+            <option value="31">경기</option>
+            <option value="32">강원</option>
+            <option value="33">충북</option>
+            <option value="34">충남</option>
+            <option value="35">전북</option>
+            <option value="36">전남</option>
+            <option value="37">경북</option>
+            <option value="38">경남</option>
+            <option value="39">제주</option>
+        </select>
+        
+       <select id="courseCode">
+            <option  value="">코스 선택</option>
+            <option id="opt1" value="">#가족코스</option>
+            <option id="opt2" value="">#자전거코스</option>
+            <option id="opt3" value="">#도보코스</option>
+            <option id="opt4" value="">#힐링코스</option>
+            <option id="opt5" value="">#도보코스</option>
+            <option id="opt6" value="">#캠핑코스</option>
+            <option id="opt7" value="">#캠핑코스</option>
+            <option id="opt8" value="">#캠핑코스</option>
+            <option id="opt9" value="">#캠핑코스</option>
+            <option id="opt10" value="">#캠핑코스</option>
+        </select>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.menubtn button').click(function() {
+                $('.menubtn button').removeClass('active');
+                $(this).addClass('active');
+    
+              
+                localStorage.setItem('activeMenu', $(this).val());
+                window.location.href = $(this).val() + '.html';
+            });
+       
+            var activeMenu = localStorage.getItem('activeMenu');
+            if (activeMenu) {
+                
+                $('button[value="' + activeMenu + '"]').addClass('active');
+            } else {
+                $('.menubtn button').first().addClass('active');
+            }
+        });
+    </script>
+    
+    
+</body>
+
+</html>

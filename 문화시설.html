@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문화시설</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="여행코스.css">
+</head>
+
+<body>
+    <script src="script.js"></script>
+    <header id="header"></header>
+
+    <div id="filter-container">
+    </div>
+
+
+    <div id="travel-list"></div>
+
+    <script>
+        let currentPage = 1;
+        const numOfRows = 99;
+        callCheck = true;
+
+        function fetchTravelData() {
+            const selectedAreaCode = $("#areaCode").val();
+            const selectedCourseCode = $("#courseCode").val();
+
+            if (!selectedAreaCode) {
+                $("#travel-list").html("<p>지역을 선택해주세요.</p>");
+                return;
+            }
+
+            $("#travel-list").html("<p>데이터를 불러오는 중...</p>");
+
+            $.ajax({
+                url: "http://apis.data.go.kr/B551011/KorService1/areaBasedList1",
+                type: "GET",
+                data: {
+                    serviceKey: "5EPM0JZGu2vix+JS73ESvNyiqPOiAlZvqw7HOMHMsVok5OAlScfevj/AcerZwoWPXx/B6AkWxHZhcfUp0j/aVA==",
+                    MobileApp: "AppTest",
+                    MobileOS: "ETC",
+                    pageNo: currentPage,
+                    numOfRows: numOfRows,
+                    contentTypeId: 14,
+                    areaCode: selectedAreaCode,
+                    cat2: selectedCourseCode,
+                    _type: "json"
+                },
+                success: function (response) {
+                    if (response.response?.body?.items?.item) {
+                        const items = response.response.body.items.item;
+                        let htmlContent = "";
+
+                        console.log(response);
+
+                        items.forEach(item => {
+                            htmlContent += `
+                                <div class="travel-card" 
+                                    data-title="${item.title}" 
+                                    data-image="${item.firstimage}"
+                                    data-addr="${item.addr1 || ''}" 
+                                    data-tel="${item.tel || ''}"                                   
+                                    data-mapx="${item.mapx || ''}" 
+                                    data-mapy="${item.mapy || ''}">                                    
+                                    <h4>${item.title}</h4>
+                                </div>
+                            `;
+                        });
+
+                        $("#travel-list").html(htmlContent);
+
+                        // 검색 결과를 localStorage에 저장
+                        sessionStorage.setItem("travelList", JSON.stringify(items));
+                        sessionStorage.setItem("selectedAreaCode", selectedAreaCode);
+                        sessionStorage.setItem("selectedCourseCode", selectedCourseCode);
+                    } else {
+                        $("#travel-list").html("<p>여행 코스를 찾을 수 없습니다.</p>");
+                    }
+                },
+                error: function () {
+                    $("#travel-list").html("<p>데이터 불러오기 오류</p>");
+                }
+            });
+        }
+
+        // 페이지 로드 시 저장된 데이터를 불러옴
+        function loadSavedTravelData() {
+            const savedAreaCode = sessionStorage.getItem("selectedAreaCode");
+            const savedCourseCode = sessionStorage.getItem("selectedCourseCode");
+            const savedTravelList = sessionStorage.getItem("travelList");
+
+            if (savedAreaCode) $("#areaCode").val(savedAreaCode);
+            if (savedCourseCode) $("#courseCode").val(savedCourseCode);
+            if (savedTravelList) {
+                const items = JSON.parse(savedTravelList);
+                let htmlContent = "";
+                items.forEach(item => {
+                    htmlContent += `
+                        <div class="travel-card" 
+                            data-title="${item.title}" 
+                            data-image="${item.firstimage || ''}"
+                            data-addr="${item.addr1 || ''}" 
+                            data-tel="${item.tel || ''}"                                   
+                            data-mapx="${item.mapx || ''}" 
+                            data-mapy="${item.mapy || ''}">                                    
+                            <h4>${item.title}</h4>
+                        </div>
+                    `;
+                });
+                $("#travel-list").html(htmlContent);
+            }
+        }
+
+        function timingcheck() {
+            $("#areaCode,#courseCode").change(function () {
+                const selectedAreaCode = $("#areaCode").val();
+                const selectedCourseCode = $("#courseCode").val();
+                
+                fetchTravelData();
+            });
+        }
+
+        $(document).ready(function () {       
+            loadSavedTravelData();
+            
+        });
+        $(document).on("click", ".travel-card", function () {
+            sessionStorage.setItem("ctitle", $(this).data("title"));
+            sessionStorage.setItem("caddr", $(this).data("addr"));
+            sessionStorage.setItem("ctel", $(this).data("tel"));
+            sessionStorage.setItem("cimage", $(this).data("image"));
+            sessionStorage.setItem("cmapx", $(this).data("mapx"));
+            sessionStorage.setItem("cmapy", $(this).data("mapy"));
+            window.location.href = `문화시설세부사항.html`;
+        });
+
+        $("#areaCode, #courseCode").change(fetchTravelData());
+
+    </script>
+
+</body>
+
+</html>

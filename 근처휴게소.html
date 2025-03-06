@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="근처휴게소.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="./jquery-3.7.1.min.js"></script>
+
+</head>
+
+<body>
+    <script src="script.js"></script>
+    <header id="headerhome"></header>
+    <section>
+        <div id="map" class="map"></div>
+    </section>
+    <script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8893ecb8ae22e7699d78acfb20c56b3f&libraries=services"></script>
+    <script>
+
+        $(document).ready(function () {
+            let allData = [];
+            let totalPages = 3; // 페이지 수, 원하는 만큼 반복합니다.
+            let requestsCompleted = 0; // 페이지 동기화 맞추려고 넣은 변수
+
+            for (let i = 1; i <= totalPages; i++) {
+                $.ajax({
+                    url: "https://data.ex.co.kr/openapi/locationinfo/locationinfoRest",
+                    type: "GET",
+                    data: {
+                        key: "8024505971",
+                        type: "json",
+                        numOfRows: 99,
+                        pageNo: i,
+                        inoutType: 0,
+                    },
+                    success: function (response) {
+                        allData = allData.concat(response.list);
+                        console.log(response); // 각 요청의 응답을 콘솔에 출력
+                        // console.log(response.list[0].unitName);
+
+                        requestsCompleted++;
+                        if (requestsCompleted === totalPages) {
+                            console.log(allData); // 모든 데이터를 합친 후 출력
+                            passData(allData);
+                        }
+                    },
+                    error: function () {
+                        console.error("API 요청 실패");
+                    }
+                });
+            }
+        });
+        //4. 코드분류stdRestCd
+        //5. 코드 넘겨줌stdRestCd
+        var positions = [];
+        function passData(data) {
+            for (let i = 0; i < data.length; i++) {
+                positions.push({
+                    content: '<div>' + data[i].unitName + '</div>'+'<a href="휴게소음식정보.html?stdRestCd=' + encodeURIComponent(data[i].stdRestCd) + '&unitCode=' + encodeURIComponent(data[i].unitCode) +'">상세정보보기</a>',
+                    latlng: new kakao.maps.LatLng(parseFloat(data[i].yValue), parseFloat(data[i].xValue)),
+                    stdRestCd: data[i].stdRestCd,
+                    
+                });
+            }
+            console.log(positions)
+            createMap()
+        }
+        function createMap() {
+
+            region = sessionStorage.getItem("region");
+            console.log(region)
+            console.log("Selected region: " + region);
+            let mapx, mapy;
+            switch (region) {
+                case "서울":
+                    mapx = 37.5665;
+                    mapy = 126.978;
+                    break;
+                case "경기":
+                    mapx = 37.2636;
+                    mapy = 127.0286;
+                    break;
+                case "강원":
+                    mapx = 37.8836;
+                    mapy = 127.7295;
+                    break;
+                case "충청":
+                    mapx = 36.3504;
+                    mapy = 127.3845;
+                    break;
+                case "경상":
+                    mapx = 35.8714;
+                    mapy = 128.6014;
+                    break;
+                case "전라":
+                    mapx = 35.824;
+                    mapy = 127.148;
+                    break;
+                default:
+                    mapx = 37.5665;
+                    mapy = 126.978;
+            }
+            //지도만들기///////////////////////////////////////////////
+
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
+                mapOption = {
+                    center: new kakao.maps.LatLng(mapx, mapy), // 지도의 중심좌표
+                    level: 11 // 지도의 확대 레벨
+                };
+            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+            for (var i = 0; i < positions.length; i++) {
+                // 마커를 생성합니다
+            
+                var marker = new kakao.maps.Marker({
+                    map: map, // 마커를 표시할 지도
+                    position: positions[i].latlng, // 마커의 위치
+                    clickable: true
+                });
+
+                // 마커에 표시할 인포윈도우를 생성합니다 
+                var iwContent = '<div style="padding:5px;">' + positions[i].content + '</div>', // 각 마커에 맞는 내용
+                    iwRemoveable = false; // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+
+                // 인포윈도우를 생성합니다
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: iwContent,
+                    removable: iwRemoveable
+                });
+
+           
+                // 마커에 클릭이벤트를 등록합니다
+                kakao.maps.event.addListener(marker, 'click', (function (marker, infowindow) {
+                    return function () {
+                        // 마커 위에 인포윈도우를 표시합니다
+                        infowindow.open(map, marker);
+                    };
+                })(marker, infowindow));
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>

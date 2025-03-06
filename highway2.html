@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 전국 교통량 조회</title>
+    <script src="/your_server_root_directory/your_server_root_directory/JavaScript/intro_4650/jquery-3.7.1.min.js"></script>
+    <script src="/your_server_root_directory/your_server_root_directory/JavaScript/intro_4650/jquery.ajax-cross-origin.min.js"></script>
+    <script src="/your_server_root_directory/your_server_root_directory/JavaScript/intro_4650/이은식/이은식/html예제/jquery-ui-1.14.1.custom/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/your_server_root_directory/your_server_root_directory/JavaScript/intro_4650/이은식/이은식/html예제/jquery-ui-1.14.1.custom/jquery-ui.css">
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; text-align: center; margin: 20px;}
+        table { width: 80%; margin: 20px auto; border-collapse: collapse;}
+        th, td{border: 1px solid #ddd; padding: 10px; text-align: center;}
+        th { background-color: #f4f4f4;}
+        #searchBtn { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer;}
+        #searchBtn:hover {background: #0056b3;}
+    </style>
+</head>
+<body>
+    
+    <h1>실시간 전국 교통량 조회</h1>
+
+    <label for="datePicker">날짜 선택:</label>
+    <input type="text" id="datePicker">
+    <button id="searchBtn">조회</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>집계시간</th>
+                <th>도공/민자</th>
+                <th>TCS/Hi-pass</th>
+                <th>차종</th>
+                <th>교통량</th>
+            </tr>
+        </thead>
+        <tbody id="trafficData">
+            <tr><td colspan="5">데이터가 없습니다.</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            $("#datePicker").datepicker({ dateFormat: 'yy-mm-dd'});
+
+            $("#searchBtn").click(function() {
+                let selectedDate = $("#datePicker").val();
+                if (!selectedDate) {
+                    alert("날짜를 선택하세요.");
+                    return;
+                }
+
+                let apikey = "8024505971"; // 발급받은 인증키 입력
+                let apiUrl = `https://data.ex.co.kr/openapi/trafficapi/trafficAll?key=${apikey}&type=json&tmType=1`;
+
+                $.ajax ({
+                    url: apiUrl,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        // 응답이 존재하는지 확인
+                        if (!response) {
+                            alert("API 응답이 없습니다.");
+                            return;
+                        }
+
+                        // 응답에 list 속성이 있는지 확인
+                        if (!response.trafficAll || !Array.isArray(response.trafficAll)) {
+                            alert("유효한 데이터를 가져오지 못했습니다.");
+                            return;
+                        }
+
+                        // 데이터가 없는 경우 처리
+                        if (response.count === "0" || response.trafficAll.length === 0) {
+                            alert("데이터가 없습니다.");
+                            return;
+                        }
+                        let dataHtml = "";
+                        response.trafficAll.forEach(item => {
+                            dataHtml += `
+                            <tr>
+                                <td>${item.sumTm || 'N/A'} </td>
+                                <td>${item.exDivName || 'N/A'}</td>
+                                <td>${item.tcsName ||'N/A'}</td>
+                                <td>${item.carType ||'N/A'}</td>
+                                <td>${item.trafficAmout ||'N/A'}</td>
+                            </tr>
+                            `;    
+                        });
+
+                        $("#trafficData").html(dataHtml);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("API 요청 실패:", status, error);
+                        alert("API 요청에 실패했습니다.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

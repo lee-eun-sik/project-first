@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인</title>
+    <script type="text/javascript" src="./jquery-3.7.1.min.js"></script>
+
+    <style>
+        .typing-effect {
+    display: inline-block;
+    color: rgb(247, 244, 244);
+    font-size: 30px; 
+    font-weight: bold;
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid black;
+    width: 0;
+    animation: typing 2.5s steps(12) forwards, blink 0.5s step-end infinite;
+    position: absolute;
+    top: 30%;
+    left: 5%;
+}
+
+/* 타이핑 애니메이션 */
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%; 
+    }
+}
+
+/* 커서 깜빡임 효과 */
+@keyframes blink {
+    0% {
+        border-color: black;
+    }
+    50% {
+        border-color: transparent;
+    }
+    100% {
+        border-color: black;
+    }
+}
+
+    </style>
+
+
+</head>
+
+<body style="align-content: center; background-image: url('images/메인배경.jpg'); background-size: 1280px 800px; background-repeat: no-repeat;">
+
+    <script src="script.js"></script>
+    <header id="headerhome"></header>
+    
+    <div class="typing-effect">“목적지에 닿아야 행복해지는 것이 아니라 여행하는 과정에서 행복을 느낀다.” </div>
+</body>
+</html>
+
+</html>

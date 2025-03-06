@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="./jquery-3.7.1.min.js"></script>
+    <body style="align-content: center; background-image: url('images/메인배경.jpg'); background-size: 1280px 800px; background-repeat: no-repeat;"></body>
+    <title>로그인</title>
+    <style type="text/css">
+    #idarea, #pwarea {
+        width: 80%;
+        height: 40px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .centerdiv {
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; 
+        align-items: center;
+        position: absolute;
+        top: 260px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 310px; 
+        height: 370px;
+        border-radius: 16px;
+        padding: 20px;
+        
+    }
+
+    .centerdiv h2 {
+        margin-top: 0;  
+    }
+
+    .centerdiv h3 {
+        margin-top: 10px;  
+        margin-bottom: 10px;
+    }
+
+    .loginbtn {
+        font-size: 15px;
+        font-weight: bold;
+        width: 80%;
+        height: 50px;
+        border-radius: 12px;
+        background-color: black;
+        color: white;
+        border: none;
+        margin-top: 20px;
+    }
+
+    .loginbtn:hover {
+        background-color: #f8fafc;
+        color: #010407; 
+    }
+
+    </style>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let id = localStorage.getItem("id");
+            let pw = localStorage.getItem("pw");
+            $("#loginbtn").click(login);
+            function login() {
+                let loginstatus = false;
+                if ($("#idarea").val() == id && $("#pwarea").val() == pw) {
+                    loginstatus = true;
+                    sessionStorage.setItem("loginstatus", loginstatus)
+                    window.location.href = "Home.html";
+                    alert("로그인 되었습니다.")
+                } else {
+                    alert("id나 password가 일치하지 않습니다.")
+                }
+            }
+        });
+    </script>
+</head>
+
+<body style=" background-image: url('./back.webp'); background-size: cover;">
+    <script src="script.js"></script>
+    <header id="headerhome">
+    </header>
+        <div class="centerdiv">
+            <h2>
+                로그인
+            </h2>
+            <h3>
+                ID
+            </h3>
+            <input type="text" id="idarea">
+            <h3>
+                Password
+            </h3>
+            <input type="password" id="pwarea">
+            <input type="button" class="loginbtn" id="loginbtn" value="로그인">
+        </div>
+        
+       
+
+    <script>
+    </script>
+</body>
+
+</html>
